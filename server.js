@@ -128,31 +128,6 @@ app.post('/api/verify-payment', async (req, res) => {
 
         console.log(`[Payment Verified ✅] Order: ${razorpay_order_id} | Payment: ${razorpay_payment_id} | ${email}`);
 
-        // ── Optional: Forward to n8n Webhook ─────────────
-        const n8nUrl = process.env.N8N_WEBHOOK_URL;
-        if (n8nUrl && n8nUrl.startsWith('http')) {
-            try {
-                await fetch(n8nUrl, {
-                    method : 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body   : JSON.stringify({
-                        name,
-                        email,
-                        whatsapp,
-                        payment_id : razorpay_payment_id,
-                        order_id   : razorpay_order_id,
-                        amount     : '₹499',
-                        source     : 'Sterling AI Academy — Razorpay Payment',
-                        timestamp  : new Date().toISOString(),
-                    }),
-                });
-                console.log('[n8n Webhook] Registration forwarded successfully.');
-            } catch (n8nErr) {
-                // Non-fatal: payment is verified even if n8n fails
-                console.warn('[n8n Webhook] Failed to forward:', n8nErr.message);
-            }
-        }
-
         res.json({
             verified   : true,
             payment_id : razorpay_payment_id,
@@ -178,6 +153,5 @@ app.listen(PORT, () => {
     console.log(`║  http://localhost:${PORT}                       ║`);
     console.log('╚══════════════════════════════════════════════╝\n');
     console.log(`  Razorpay Key: ${process.env.RAZORPAY_KEY_ID || '⚠️  NOT SET — edit .env!'}`);
-    console.log(`  n8n Webhook : ${process.env.N8N_WEBHOOK_URL || 'Not configured (optional)'}`);
     console.log('');
 });
