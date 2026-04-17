@@ -1,0 +1,1390 @@
+<!DOCTYPE html>
+<html lang="ml">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sterling AI Academy | Agentic AI & Automation Workshop by Fathima Rasha TP</title>
+    <meta name="description" content="Master Agentic AI, n8n, and ElevenLabs with Autonomous AI Architect Fathima Rasha TP. Build self-executing systems and lead the automation revolution.">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Noto+Sans+Malayalam:wght@400;700&display=swap');
+
+        :root {
+            --bg-dark: #020617;
+            --bg-card: #080b1a;
+            --primary: #f8fafc;
+            --accent: #c5a059;
+            --accent-glow: rgba(197, 160, 89, 0.3);
+            --secondary: #ef4444;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --glass: rgba(8, 11, 26, 0.8);
+            --spotlight-gradient: radial-gradient(800px circle at var(--x) var(--y), rgba(197, 160, 89, 0.08), transparent 40%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        @media (hover: hover) {
+            * { cursor: none; }
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: 'Plus Jakarta Sans', 'Noto Sans Malayalam', sans-serif;
+            line-height: 1.6;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Noise Overlay */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3%3Ffilter id='n' opacity='0.4'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+            opacity: 0.04;
+            pointer-events: none;
+            z-index: 5000;
+        }
+
+        /* Background Glow Orbs */
+        .orb {
+            position: fixed;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            filter: blur(140px);
+            z-index: -1;
+            opacity: 0.2;
+            pointer-events: none;
+            animation: move linear infinite alternate;
+        }
+
+        .orb-1 {
+            background: #0ea5e9;
+            top: -200px;
+            left: -200px;
+            animation-duration: 20s;
+        }
+
+        .orb-2 {
+            background: var(--accent);
+            bottom: -200px;
+            right: -200px;
+            animation-duration: 25s;
+        }
+
+        @keyframes move {
+            from {
+                transform: translate(0, 0);
+            }
+
+            to {
+                transform: translate(200px, 100px);
+            }
+        }
+
+        /* Spotlight Effect Layer */
+        .spotlight {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--spotlight-gradient);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .cursor, .cursor-dot { display: none; }
+
+        @media (hover: hover) {
+            /* Custom Cursor */
+            .cursor {
+                display: block;
+                width: 20px;
+                height: 20px;
+                border: 2px solid var(--accent);
+                border-radius: 50%;
+                position: fixed;
+                pointer-events: none;
+                z-index: 9999;
+                transition: transform 0.1s ease;
+                mix-blend-mode: difference;
+            }
+
+            .cursor-dot {
+                display: block;
+                width: 4px;
+                height: 4px;
+                background: var(--accent);
+                border-radius: 50%;
+                position: fixed;
+                pointer-events: none;
+                z-index: 9999;
+            }
+        }
+
+        /* Animations */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.17, 0.55, 0.55, 1);
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        h2, h3, h4 {
+            line-height: 1.2;
+            letter-spacing: -1px;
+        }
+
+        h1 { font-size: clamp(2.5rem, 8vw, 4.5rem); }
+        h2 { font-size: clamp(2rem, 6vw, 3rem); }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        @media (max-width: 480px) {
+            .container { padding: 0 1.25rem; }
+        }
+
+        .section {
+            padding: 8rem 0;
+        }
+
+        /* Components */
+        .glass-header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            z-index: 1000;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 1.5rem 0;
+            transition: padding 0.3s ease;
+        }
+
+        .btn-elite {
+            display: inline-block;
+            background: var(--primary);
+            color: #000;
+            font-weight: 700;
+            padding: 1.25rem 3rem;
+            border-radius: 99px;
+            text-decoration: none;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 0 20px var(--accent-glow);
+            text-align: center;
+            position: relative;
+            z-index: 10;
+        }
+
+        .btn-elite:hover {
+            transform: scale(1.05) translateY(-5px);
+            box-shadow: 0 15px 40px var(--accent-glow);
+            background: white;
+        }
+
+        .shimmer-text {
+            background: linear-gradient(90deg, #fff 0%, #c5a059 50%, #fff 100%);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shimmer 4s linear infinite;
+        }
+
+        @keyframes shimmer {
+            to {
+                background-position: 200% center;
+            }
+        }
+
+        /* Bento Grid */
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-auto-rows: 200px;
+            gap: 1.5rem;
+            margin-top: 4rem;
+        }
+
+        .bento-item {
+            background: var(--bg-card);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 2rem;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: default;
+        }
+
+        .bento-item:hover {
+            border-color: var(--accent);
+            transform: translateY(-5px) scale(1.01);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 20px rgba(197, 160, 89, 0.1);
+        }
+
+        /* CSS Certificate Mockup */
+        .cert-mockup {
+            width: 100%;
+            height: 180px;
+            background: linear-gradient(135deg, #1a1a1a, #0a0a0a);
+            border-radius: 1rem;
+            margin-top: 2rem;
+            padding: 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        .cert-mockup::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(from 0deg, transparent, var(--accent), transparent);
+            animation: rotate 10s linear infinite;
+            opacity: 0.1;
+        }
+
+        @keyframes rotate {
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .cert-mockup h4 {
+            font-family: 'Plus Jakarta Sans';
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+            color: var(--accent);
+        }
+
+        .cert-mockup p {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: white;
+            margin: 0.5rem 0;
+        }
+
+        .cert-mockup .seal {
+            width: 40px;
+            height: 40px;
+            background: var(--primary);
+            border-radius: 50%;
+            border: 2px solid var(--accent);
+            margin-top: 1rem;
+        }
+
+        .bento-item.large {
+            grid-column: span 2;
+            grid-row: span 2;
+        }
+
+        .bento-item.medium {
+            grid-column: span 2;
+        }
+
+        /* Pricing Elite */
+        .pricing-card {
+            background: radial-gradient(circle at top left, #111, #000);
+            border: 1px solid var(--accent);
+            box-shadow: 0 0 50px rgba(37, 99, 235, 0.1);
+            padding: 4rem;
+            border-radius: 3rem;
+            max-width: 600px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .old-price {
+            text-decoration: line-through;
+            color: var(--text-muted);
+            font-size: 1.75rem;
+        }
+
+        .new-price {
+            font-size: 6rem;
+            font-weight: 800;
+            background: linear-gradient(to bottom, #fff, #666);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 1rem 0;
+        }
+
+        /* Target Section */
+        .target-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .target-card {
+            background: rgba(255, 255, 255, 0.02);
+            padding: 2.5rem;
+            border-radius: 2rem;
+            text-align: left;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .target-card h3 {
+            color: var(--accent);
+            margin-bottom: 1rem;
+        }
+
+        /* Checklist */
+        .hero-checklist {
+            list-style: none;
+            display: inline-block;
+            text-align: left;
+            margin: 2rem 0;
+        }
+
+        .hero-checklist li {
+            font-size: 1.1rem;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .hero-checklist li span {
+            color: var(--accent);
+            font-weight: bold;
+        }
+
+        /* Countdown */
+        .timer-container {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-top: 3rem;
+        }
+
+        .timer-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1rem;
+            border-radius: 1rem;
+            min-width: 90px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .timer-val {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--accent);
+        }
+
+        .timer-label {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        /* Floating Support */
+        .whatsapp-btn {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: #25d366;
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+            z-index: 3000;
+            text-decoration: none;
+            transition: transform 0.3s ease, bottom 0.5s ease;
+        }
+
+        .whatsapp-btn.shifted {
+            bottom: 6rem;
+        }
+
+        .whatsapp-btn:hover {
+            transform: scale(1.1);
+        }
+
+        /* Accordion FAQ */
+        .faq-item {
+            background: var(--bg-card);
+            border-radius: 1rem;
+            margin-bottom: 1rem;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .faq-question {
+            padding: 1.5rem;
+            cursor: pointer;
+            font-weight: 700;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .faq-answer {
+            padding: 0 1.5rem 1.5rem 1.5rem;
+            color: var(--text-muted);
+            display: none;
+        }
+
+        @media (max-width: 1024px) {
+            .bento-grid {
+                grid-template-columns: repeat(2, 1fr);
+                grid-auto-rows: auto;
+            }
+
+            .bento-item.large,
+            .bento-item.medium {
+                grid-column: span 2;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .bento-grid, .target-grid {
+                grid-template-columns: 1fr !important;
+            }
+            
+            .bento-item {
+                grid-column: span 1 !important;
+                height: auto;
+            }
+
+            .section {
+                padding: 4rem 0;
+            }
+
+            .m-text {
+                text-align: center;
+            }
+
+            .glass-header .container {
+                padding: 0 1rem;
+            }
+
+            .logo span {
+                font-size: 1.1rem;
+            }
+
+            .logo img {
+                height: 32px !important;
+            }
+
+            .hero-checklist li {
+                font-size: 0.95rem;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .logo span {
+                font-size: 0.9rem;
+            }
+            
+            /* Hide ACADEMY on extremely small screens if it overflows */
+            .logo span span:last-child {
+                display: none;
+            }
+        }
+
+        /* Sticky Mobile Footer */
+        .sticky-cta {
+            position: fixed;
+            bottom: -100px;
+            left: 0;
+            width: 100%;
+            background: rgba(8, 8, 8, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 1rem 1.5rem;
+            z-index: 2500;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            transition: bottom 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .sticky-cta.active { bottom: 0; }
+
+        .trust-bar {
+            background: rgba(255, 255, 255, 0.02);
+            padding: 2rem 0;
+            overflow: hidden;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .trust-track {
+            display: flex;
+            gap: 4rem;
+            animation: scroll-trust 30s linear infinite;
+            width: max-content;
+        }
+
+        @keyframes scroll-trust {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        .social-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(197, 160, 89, 0.1);
+            padding: 0.5rem 1rem;
+            border-radius: 99px;
+            margin-top: 1.5rem;
+            font-weight: 700;
+            font-size: 0.85rem;
+            border: 1px solid rgba(197, 160, 89, 0.2);
+        }
+        @media (max-width: 768px) {
+            .sticky-cta {
+                padding: 0.75rem 1rem;
+            }
+            
+            .sticky-cta p {
+                font-size: 0.7rem !important;
+            }
+
+            .sticky-cta .btn-elite {
+                padding: 0.6rem 1rem !important;
+                font-size: 0.8rem !important;
+            }
+        }
+        /* Registration Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(10px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 6000;
+        }
+
+        .modal-content {
+            background: var(--bg-card);
+            border: 1px solid var(--accent);
+            padding: 3rem;
+            border-radius: 2rem;
+            max-width: 500px;
+            width: 90%;
+            position: relative;
+            box-shadow: 0 0 50px var(--accent-glow);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 1.5rem;
+        }
+
+        .reg-input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 1rem 1.5rem;
+            border-radius: 1rem;
+            color: white;
+            margin-bottom: 1.5rem;
+            font-family: inherit;
+        }
+
+        .reg-input:focus {
+            outline: none;
+            border-color: var(--accent);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .success-state {
+            display: none;
+            text-align: center;
+        }
+
+        .success-state h3 { color: var(--accent); margin-bottom: 1rem; }
+        /* Razorpay Loading State */
+        .btn-loading {
+            opacity: 0.7;
+            cursor: not-allowed !important;
+            position: relative;
+        }
+        .btn-loading::after {
+            content: '';
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(0,0,0,0.3);
+            border-top-color: #000;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+            margin-left: 10px;
+            vertical-align: middle;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .payment-secure-badge {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            margin-top: 1rem;
+        }
+        .payment-secure-badge svg { flex-shrink: 0; }
+        .razorpay-branding {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+            font-size: 0.7rem;
+            color: #64748b;
+            margin-top: 0.5rem;
+        }
+    </style>
+    <!-- Razorpay Checkout SDK -->
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+</head>
+
+<body>
+
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="spotlight" id="spotlight"></div>
+    <div class="cursor" id="cursor"></div>
+    <div class="cursor-dot" id="cursor-dot"></div>
+
+    <header class="glass-header">
+        <div class="container" style="display: flex; justify-content: space-between; align-items: center;">
+            <div class="logo">
+                <a href="/" style="text-decoration: none; display: flex; align-items: center; gap: 0.75rem;">
+                    <img src="https://sterlingaiacademy.com/assets/hero-shield-CM5cE7pR.png" alt="Sterling AI Shield" style="height: 32px; width: auto;">
+                    <span style="font-weight: 800; text-transform: uppercase; color: var(--text-main); font-size: 1.2rem; letter-spacing: -1px;">
+                        STERLING <span style="color: var(--accent);">AI</span> ACADEMY
+                    </span>
+                </a>
+            </div>
+            <a href="javascript:void(0)" onclick="openModal()" class="btn-elite" style="padding: 0.75rem 2rem; font-size: 0.9rem;">Join Now</a>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="section" style="padding-top: 10rem; text-align: center;">
+        <div class="container reveal">
+            <span
+                style="background: rgba(197, 160, 89, 0.1); color: var(--accent); padding: 0.5rem 1.5rem; border-radius: 99px; font-weight: 700; font-size: 0.8rem; border: 1px solid var(--accent);">
+                THE AUTOMATION REVOLUTION
+            </span>
+            <div class="social-badge">
+                <span style="color: #fbbf24;">⭐⭐⭐⭐⭐</span>
+                <span>4.9/5 (Join 10,000+ Students)</span>
+            </div>
+            <h1 class="m-text shimmer-text"
+                style="margin-top: 2rem; line-height: 1.1; letter-spacing: -2px;">
+                Build Your 24/7 <br>Interactive AI Empire.
+            </h1>
+            <p class="m-text" style="color: var(--text-main); font-size: clamp(1.1rem, 4vw, 1.5rem); margin-top: 1.5rem; font-weight: 600;">
+                Master Agentic AI + n8n + ElevenLabs in 5 Days.
+            </p>
+
+            <ul class="hero-checklist reveal">
+                <li><span>✅</span> Build AI agents that speak with Ultra-Realistic Voices</li>
+                <li><span>✅</span> Automate complex tasks using n8n Logic Swarms</li>
+                <li><span>✅</span> Create 24/7 interactive assistants that sound human</li>
+            </ul>
+
+            <div style="margin-top: 2rem;">
+                <a href="javascript:void(0)" onclick="openModal()" class="btn-elite">Register Now For ₹499</a>
+                <p style="margin-top: 1.5rem; font-size: 0.9rem; color: var(--text-muted);">
+                    <span style="color: #ef4444;">🔥 Limited Seats!</span> Early bird offer ending soon.
+                </p>
+            </div>
+
+            <div class="timer-container reveal">
+                <div class="timer-item"><span class="timer-val" id="days">00</span><br><span
+                        class="timer-label">Days</span></div>
+                <div class="timer-item"><span class="timer-val" id="hours">00</span><br><span
+                        class="timer-label">Hours</span></div>
+                <div class="timer-item"><span class="timer-val" id="mins">00</span><br><span
+                        class="timer-label">Mins</span></div>
+                <div class="timer-item"><span class="timer-val" id="secs">00</span><br><span
+                        class="timer-label">Secs</span></div>
+            </div>
+        </div>
+    </section>
+
+    <div class="trust-bar reveal">
+        <div class="container overflow-hidden">
+            <div class="trust-track">
+                <div style="font-weight: 800; color: #64748b; font-size: 1.5rem;">n8n</div>
+                <div style="font-weight: 800; color: #64748b; font-size: 1.5rem;">ELEVENLABS</div>
+                <div style="font-weight: 800; color: #64748b; font-size: 1.5rem;">OPENAI</div>
+                <div style="font-weight: 800; color: #64748b; font-size: 1.5rem;">ZAPIER</div>
+                <div style="font-weight: 800; color: #64748b; font-size: 1.5rem;">ANTHROPIC</div>
+                <div style="font-weight: 800; color: #64748b; font-size: 1.5rem;">n8n</div>
+                <div style="font-weight: 800; color: #64748b; font-size: 1.5rem;">ELEVENLABS</div>
+                <div style="font-weight: 800; color: #64748b; font-size: 1.5rem;">OPENAI</div>
+                <div style="font-weight: 800; color: #64748b; font-size: 1.5rem;">GROQ</div>
+            </div>
+        </div>
+    </div>
+    <div
+        style="background: rgba(255, 255, 255, 0.02); padding: 3rem 0; border-top: 1px solid rgba(255,255,255,0.05); border-bottom: 1px solid rgba(255,255,255,0.05);">
+        <div class="container reveal"
+            style="display: flex; flex-wrap: wrap; justify-content: space-around; gap: 3rem; text-align: center;">
+            <div>
+                <h3 style="color: var(--accent);">DATE</h3>
+                <p>4th - 8th May</p>
+            </div>
+            <div>
+                <h3 style="color: var(--accent);">TIME</h3>
+                <p>8:00 PM - 11:00 PM</p>
+            </div>
+            <div>
+                <h3 style="color: var(--accent);">LANGUAGE</h3>
+                <p>Manglish (Malayalam + English)</p>
+            </div>
+            <div>
+                <h3 style="color: var(--accent);">LIVE</h3>
+                <p>Zoom Workshop</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bento Section -->
+    <section class="section" style="background: #050505;">
+        <div class="container">
+            <h2 style="font-size: 3rem; text-align: center; margin-bottom: 4rem;" class="reveal">Why This is
+                Revolutionary</h2>
+            <div class="bento-grid">
+                <div class="bento-item large reveal">
+                    <h3 style="font-size: 2rem; margin-bottom: 1rem;">Sterling Automation Certificate</h3>
+                    <p style="color: var(--text-muted);">Master the internal logic of complex No-Code automation &
+                        Agentic workflows.</p>
+                    <div class="cert-mockup">
+                        <h4>CERTIFICATE OF EXCELLENCE</h4>
+                        <p>AUTOMATION ARCHITECT</p>
+                        <div class="seal"></div>
+                    </div>
+                </div>
+                <div class="bento-item reveal">
+                    <h3 style="color: var(--accent); margin-bottom: 0.5rem;">n8n & ElevenLabs</h3>
+                    <p style="color: var(--text-muted);">Connect logic to ultra-realistic AI Voices.</p>
+                </div>
+                <div class="bento-item reveal">
+                    <h3 style="color: var(--accent); margin-bottom: 0.5rem;">Custom Agents</h3>
+                    <p style="color: var(--text-muted);">Go beyond simple prompts; build self-running loops.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Curriculum -->
+    <section class="section">
+        <div class="container reveal">
+            <h2 style="font-size: 3rem; text-align: center; margin-bottom: 5rem;">5-Day Mastery Roadmap</h2>
+            <div class="target-grid">
+                <div class="target-card reveal">
+                    <h3 style="color: var(--accent);">DAY 1: The Automation Audit</h3>
+                    <p style="color: var(--text-muted); margin-bottom: 1rem;">Setup your elite stack and identify
+                        "leaks" in your daily workflow.</p>
+                    <ul
+                        style="list-style: none; font-size: 0.85rem; color: var(--text-muted); display: grid; gap: 0.5rem;">
+                        <li>🚀 n8n vs Make.com: Choosing your weapon</li>
+                        <li>🔍 Workflow Auditing: Finding 10h+ of manual tasks to kill</li>
+                        <li>🔑 API & Webhook Fundamentals (No-Code style)</li>
+                    </ul>
+                </div>
+                <div class="target-card reveal">
+                    <h3 style="color: var(--accent);">DAY 2: n8n Engine Mastery</h3>
+                    <p style="color: var(--text-muted); margin-bottom: 1rem;">Master the logic king and build your first
+                        "Social Listening" Agent.</p>
+                    <ul
+                        style="list-style: none; font-size: 0.85rem; color: var(--text-muted); display: grid; gap: 0.5rem;">
+                        <li>🧵 Node-based logic & Data Mapping mastery</li>
+                        <li>🤖 Project: Build a 24/7 Brand Monitoring Agent</li>
+                        <li>📁 Working with JSON data (The easy way)</li>
+                    </ul>
+                </div>
+                <div class="target-card reveal">
+                    <h3 style="color: var(--accent);">DAY 3: ElevenLabs Mastery</h3>
+                    <p style="color: var(--text-muted); margin-bottom: 1rem;">The art of synthetic voice cloning & real-time TTS loops.</p>
+                    <ul
+                        style="list-style: none; font-size: 0.85rem; color: var(--text-muted); display: grid; gap: 0.5rem;">
+                        <li>🎙️ Voice Cloning: 99% accuracy in any language</li>
+                        <li>⚡ Low-latency streaming for Voice Agents</li>
+                        <li>🎭 Audio Manipulation: Controlling emotion & pace</li>
+                    </ul>
+                </div>
+                <div class="target-card reveal">
+                    <h3 style="color: var(--accent);">DAY 4: Agentic AI "The Brain"</h3>
+                    <p style="color: var(--text-muted); margin-bottom: 1rem;">Adding Multi-Step Reasoning to your
+                        standard automations.</p>
+                    <ul
+                        style="list-style: none; font-size: 0.85rem; color: var(--text-muted); display: grid; gap: 0.5rem;">
+                        <li>🧠 Integrating LLMs as "Decision Makers" in loops</li>
+                        <li>💬 Project: AI Support Agent with "Memory" & Research</li>
+                        <li>🔗 Linking Knowledge Bases to your Agent Swarms</li>
+                    </ul>
+                </div>
+                <div class="target-card reveal">
+                    <h3 style="color: var(--accent);">DAY 5: The Monetization Blueprint</h3>
+                    <p style="color: var(--text-muted); margin-bottom: 1rem;">Transforming your skills into a
+                        high-ticket AaaS business.</p>
+                    <ul
+                        style="list-style: none; font-size: 0.85rem; color: var(--text-muted); display: grid; gap: 0.5rem;">
+                        <li>💎 Pricing Workflows: Charging for value, not hours</li>
+                        <li>🏷️ White-Labelling: Launching your Automation Agency</li>
+                        <li>🌍 Scaling: Managing 100+ Agent loops for clients</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Project Showcase / Outcomes -->
+    <section class="section" style="background: rgba(255,255,255,0.01);">
+        <div class="container reveal">
+            <h2 style="font-size: 3rem; text-align: center; margin-bottom: 4rem;">What You'll Actually Build</h2>
+            <div class="bento-grid">
+                <div class="bento-item reveal">
+                    <h4 style="color: var(--accent);">Interactive Phone Agent</h4>
+                    <p style="font-size: 0.9rem; color: var(--text-muted); margin-top: 0.5rem;">Automatically handles inbound inquiries, speaks with your voice, and books meetings while you sleep.</p>
+                </div>
+                <div class="bento-item reveal">
+                    <h4 style="color: var(--accent);">Personal Voice Assistant</h4>
+                    <p style="font-size: 0.9rem; color: var(--text-muted); margin-top: 0.5rem;">A Slack/WhatsApp bot that doesn't just text, but sends human-like voice notes to answer client questions.</p>
+                </div>
+                <div class="bento-item reveal">
+                    <h4 style="color: var(--accent);">Content Repurposer</h4>
+                    <p style="font-size: 0.9rem; color: var(--text-muted); margin-top: 0.5rem;">Upload one video/text,
+                        and AI will turn it into 10 multi-platform posts, schedule them, and track performance.</p>
+                </div>
+                <div class="bento-item reveal">
+                    <h4 style="color: var(--accent);">Finance Automator</h4>
+                    <p style="font-size: 0.9rem; color: var(--text-muted); margin-top: 0.5rem;">Automatically extracts
+                        data from invoices (PDFs), categorizes them in Google Sheets, and updates your dashboard.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tech Stack Detailed -->
+    <section class="section" style="background: linear-gradient(to bottom, #000, #080808);">
+        <div class="container">
+            <h2 style="font-size: 3rem; text-align: center; margin-bottom: 5rem;" class="reveal">The Tech Stack Deep Dive</h2>
+            <div class="target-grid">
+                <div class="target-card reveal" style="border-left: 4px solid #ff6d5a;">
+                    <h3 style="color: #ff6d5a;">Mastering ElevenLabs</h3>
+                    <p style="color: var(--text-muted); font-size: 0.95rem;">Building the 'Voice' of modern AI:</p>
+                    <ul style="list-style: none; color: var(--text-muted); font-size: 0.85rem; margin-top: 1rem; display: grid; gap: 0.8rem;">
+                        <li>✨ <strong>Voice Cloning:</strong> Clone your own voice for personalized agents.</li>
+                        <li>🛡️ <strong>Speech Synthesis:</strong> High-fidelity audio that's indistinguishable from humans.</li>
+                        <li>🔗 <strong>Streaming API:</strong> Connecting ElevenLabs to n8n for 'Talkative' workflows.</li>
+                    </ul>
+                </div>
+                <div class="target-card reveal" style="border-left: 4px solid #ea4b71;">
+                    <h3 style="color: #ea4b71;">n8n: The Powerhouse</h3>
+                    <p style="color: var(--text-muted); font-size: 0.95rem;">The self-hostable, code-meets-no-code engine:</p>
+                    <ul style="list-style: none; color: var(--text-muted); font-size: 0.85rem; margin-top: 1rem; display: grid; gap: 0.8rem;">
+                        <li>🧵 <strong>Branching Logic:</strong> Creating deeply nested 'If/Else' and 'Wait' loops.</li>
+                        <li>💻 <strong>JS Integration:</strong> Write 2-3 lines of Javascript to solve impossible problems.</li>
+                        <li>☁️ <strong>Privacy First:</strong> Learn how to host your own automation server for ₹0 cost.</li>
+                    </ul>
+                </div>
+                <div class="target-card reveal" style="border-left: 4px solid #2563eb;">
+                    <h3 style="color: var(--accent);">Agentic AI Core</h3>
+                    <p style="color: var(--text-muted); font-size: 0.95rem;">Adding a "Brain" to your static workflows:</p>
+                    <ul style="list-style: none; color: var(--text-muted); font-size: 0.85rem; margin-top: 1rem; display: grid; gap: 0.8rem;">
+                        <li>🧠 <strong>LLM Orchestration:</strong> Teaching AI when to use a tool and when to wait.</li>
+                        <li>⚙️ <strong>Function Calling:</strong> How to let ChatGPT actually "DO" things in the real world.</li>
+                        <li>📊 <strong>Knowledge Integration:</strong> RAG (Retrieval Augmented Generation) for personalized agents.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Host Section -->
+    <section class="section" style="background: #080808;">
+        <div class="container reveal">
+            <div
+                style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 4rem; align-items: center;">
+                <div class="bento-item" style="padding: 0;">
+                    <img src="assets/fathima.png" alt="Fathima Rasha TP - Lead Host" style="width: 100%; border-radius: 2rem;">
+                </div>
+                <div>
+                    <h3 style="color: var(--accent); letter-spacing: 2px;">MEET YOUR HOST</h3>
+                    <h2 style="font-size: 2.5rem; margin: 1rem 0;">Fathima Rasha TP</h2>
+                    <p
+                        style="color: var(--text-muted); font-size: 0.9rem; border-bottom: 1px solid #333; padding-bottom: 1rem;">
+                        Autonomous AI Architect | Agentic Automation Specialist | Global Resource Person
+                    </p>
+                    <div style="margin-top: 2rem; display: grid; gap: 1rem; color: var(--text-muted);">
+                        <p style="font-style: italic; color: var(--accent);">"We are transitioning from tools that assist to agents that act. My mission is to architect systems that don't just follow instructions—they reason, adapt, and execute."</p>
+                        <p><strong>Fathima Rasha TP</strong> is a pioneer in <strong>Agentic AI and Autonomous Workflow Architectures</strong>. Having provided strategic <strong>AI consultancy for numerous high-growth companies</strong>, she specializes in the sophisticated orchestration of LLMs and multi-node logic swarms, building self-evolving systems that redefine the boundaries of human-AI collaboration.</p>
+                        <p>Her deep expertise in <strong>n8n, ElevenLabs, and Generative Logic</strong> has made her a sought-after authority in the AI ecosystem. Having empowered and trained over <strong>3,000+ students and professional leaders</strong> worldwide, she bridges the gap between state-of-the-art AI research and high-impact, scalable automation that drives exponential efficiency.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section id="pricing" class="section">
+        <div class="container reveal">
+            <div class="pricing-card">
+                <h3 style="color: var(--accent); text-transform: uppercase;">Early Bird Reservation</h3>
+                <div style="margin: 3rem 0;">
+                    <span class="old-price">₹4,999</span>
+                    <div class="new-price">₹499</div>
+                    <p style="color: var(--text-muted);">Total Value Worth: <span
+                            style="color: white; font-weight: 700;">₹11,000+</span></p>
+                </div>
+                <a href="javascript:void(0)" onclick="openModal()" class="btn-elite" style="width: 100%; font-size: 1.5rem;">Reserve My Spot Now</a>
+
+                <div
+                    style="margin-top: 3rem; text-align: left; background: rgba(255,255,255,0.03); padding: 2rem; border-radius: 1.5rem;">
+                    <p style="color: var(--accent); font-weight: 700; margin-bottom: 1rem;">EXCLUSIVE BONUSES:</p>
+                    <ul
+                        style="list-style: none; display: grid; gap: 0.8rem; color: var(--text-muted); font-size: 0.9rem;">
+                        <li>🚀 BONUS 1: Private Library of 50+ n8n Logic Templates & Workflows</li>
+                        <li>📄 BONUS 2: Agentic AI Blueprint: From Prompt to Full Autonomy</li>
+                        <li>👫 BONUS 3: 1+1 Access to Everything (Bring a Friend)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="section" style="background: #000;">
+        <div class="container reveal">
+            <h2 style="font-size: 3rem; text-align: center; margin-bottom: 5rem;">What Our Students Say</h2>
+            <div class="target-grid">
+                <div class="target-card reveal" style="border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.01);">
+                    <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
+                        <div style="width: 50px; height: 50px; background: var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800;">A</div>
+                        <div>
+                            <p style="font-weight: 700; font-size: 0.9rem;">Anand K.</p>
+                            <p style="font-size: 0.75rem; color: var(--text-muted);">Marketing Head</p>
+                        </div>
+                    </div>
+                    <p style="font-size: 0.95rem; color: var(--text-muted); font-style: italic;">"Reduced my weekly reporting time from 6 hours to 15 minutes using the n8n logic taught here. Pure gold!"</p>
+                </div>
+                <div class="target-card reveal" style="border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.01);">
+                    <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
+                        <div style="width: 50px; height: 50px; background: #6366f1; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800;">S</div>
+                        <div>
+                            <p style="font-weight: 700; font-size: 0.9rem;">Sneha M.</p>
+                            <p style="font-size: 0.75rem; color: var(--text-muted);">Freelance Developer</p>
+                        </div>
+                    </div>
+                    <p style="font-size: 0.95rem; color: var(--text-muted); font-style: italic;">"The AaaS (Automation-as-a-Service) model helped me land a ₹75k/month retainer for a client in Dubai."</p>
+                </div>
+                <div class="target-card reveal" style="border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.01);">
+                    <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
+                        <div style="width: 50px; height: 50px; background: #ec4899; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800;">R</div>
+                        <div>
+                            <p style="font-weight: 700; font-size: 0.9rem;">Rahul S.</p>
+                            <p style="font-size: 0.75rem; color: var(--text-muted);">E-com Owner</p>
+                        </div>
+                    </div>
+                    <p style="font-size: 0.95rem; color: var(--text-muted); font-style: italic;">"Built my customer support agent on Day 4. It handles 80% of my WhatsApp inquiries now. Sterling AI is amazing!"</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="section">
+        <div class="container reveal" style="max-width: 800px;">
+            <h2 style="font-size: 3rem; text-align: center; margin-bottom: 4rem;">Everything You Need To Know</h2>
+            <div class="faq-item">
+                <div class="faq-question">Do I need AI experience? <span>+</span></div>
+                <div class="faq-answer">No. We start from zero and build your complete AI system together.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">What if I miss a live session? <span>+</span></div>
+                <div class="faq-answer">Don't worry! Every session is recorded in HD. You will get lifetime access to the recordings on your dashboard within 24 hours of the live class.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">Do I need to pay for n8n or Make.com? <span>+</span></div>
+                <div class="faq-answer">No. We will show you how to build powerful agents using the FREE tiers of these tools. We even teach you how to self-host n8n for ₹0.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">Do I need a high-end laptop? <span>+</span></div>
+                <div class="faq-answer">Not at all. Since we use cloud-based tools like Make.com, any laptop that can run a Chrome browser is more than enough.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">Is there any support if I get stuck? <span>+</span></div>
+                <div class="faq-answer">Yes! You get access to our "Elite Automation Community" on WhatsApp/Discord where our mentors answer your doubts for a lifetime.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">When will I receive my certificate? <span>+</span></div>
+                <div class="faq-answer">Your "Sterling Automation Architect" certificate will be issued digitally within 48 hours of completing your Day 5 projects.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">Is this suitable for beginners? <span>+</span></div>
+                <div class="faq-answer">Absolutely. We start from the absolute basics of "Logic Building" and move to advanced agents. No coding experience is required.</div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="section" style="padding: 5rem 0 10rem 0; border-top: 1px solid rgba(255,255,255,0.05); text-align: center;">
+        <div class="container">
+            <h2 style="display: flex; align-items: center; justify-content: center; gap: 0.75rem; font-weight: 800; margin-bottom: 1rem; text-transform: uppercase; font-size: 1.8rem;">
+                <img src="https://sterlingaiacademy.com/assets/hero-shield-CM5cE7pR.png" alt="Sterling AI Shield" style="height: 48px; width: auto;">
+                <span>STERLING <span style="color: #ef4444;">AI</span> ACADEMY</span>
+            </h2>
+            <p style="color: var(--text-muted);">&copy; 2026 Sterling AI. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Instagram Sticky CTA -->
+    <div class="sticky-cta" id="sticky-cta">
+        <div>
+            <p style="font-size: 0.8rem; color: var(--text-muted);">Enroll Today</p>
+            <p style="font-weight: 800; color: var(--accent);">₹499 <span style="text-decoration: line-through; color: #444; font-size: 0.8rem;">₹4,999</span></p>
+        </div>
+        <a href="javascript:void(0)" onclick="openModal()" class="btn-elite" style="padding: 0.75rem 1.5rem; font-size: 0.85rem; white-space: nowrap; flex-shrink: 0;">Reserve Spot</a>
+    </div>
+
+    <!-- WhatsApp Support -->
+    <a href="#" class="whatsapp-btn">
+        <svg viewBox="0 0 24 24" width="32" height="32" fill="currentColor">
+            <path
+                d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" />
+        </svg>
+    </a>
+
+    <!-- Registration Modal HTML -->
+    <div class="modal-overlay" id="reg-modal">
+        <div class="modal-content bento-item">
+            <span class="modal-close" onclick="closeModal()">&times;</span>
+            
+            <div id="modal-form-state">
+                <h3 style="color: var(--accent); margin-bottom: 0.5rem;">Secure Your Spot 🔐</h3>
+                <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 2rem;">Enter your details — you'll be taken to the secure payment page.</p>
+                
+                <form id="registration-form">
+                    <input type="text" id="reg-name" class="reg-input" placeholder="Full Name" required>
+                    <input type="email" id="reg-email" class="reg-input" placeholder="Email Address" required>
+                    <input type="tel" id="reg-whatsapp" class="reg-input" placeholder="WhatsApp Number (With Country Code)" required>
+                    
+                    <button type="submit" id="pay-btn" class="btn-elite" style="width: 100%; border: none; cursor: pointer;">
+                        Pay ₹499 &amp; Reserve Spot
+                    </button>
+
+                    <div class="payment-secure-badge">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                        100% Secure Payment via Razorpay
+                    </div>
+                    <div class="razorpay-branding">
+                        <svg width="10" height="10" viewBox="0 0 24 24" fill="#3395FF"><circle cx="12" cy="12" r="12"/></svg>
+                        Powered by Razorpay · Cards, UPI, NetBanking, Wallets accepted
+                    </div>
+
+                    <p id="pay-error" style="font-size: 0.8rem; color: #ef4444; margin-top: 0.75rem; text-align: center; display: none;"></p>
+                </form>
+            </div>
+
+            <div id="modal-success-state" class="success-state">
+                <div style="font-size: 3rem; margin-bottom: 1rem;">🎉</div>
+                <h3>Payment Successful!</h3>
+                <p style="color: var(--text-muted); margin-bottom: 0.75rem;">Your seat is confirmed! Check your WhatsApp and Email for the private Zoom invitation and pre-bootcamp kit.</p>
+                <p id="success-payment-id" style="font-size: 0.75rem; color: var(--text-muted); font-family: monospace;"></p>
+                <button class="btn-elite" style="margin-top: 2rem; border: none; cursor: pointer;" onclick="closeModal()">Got it! 🚀</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ── CONFIG — Update this when you deploy to Railway ────────────
+        // LOCAL DEV:   leave as empty string '' (calls same server)
+        // LOVABLE/PROD: paste your Railway URL → 'https://your-app.up.railway.app'
+        const API_BASE = '';   // ← REPLACE WITH RAILWAY URL WHEN DEPLOYING TO LOVABLE
+        // ────────────────────────────────────────────────────────────────
+
+        // ── Modal Logic ───────────────────────────────────────
+        const openModal = () => {
+            document.getElementById('reg-modal').style.display = 'flex';
+        };
+
+        const closeModal = () => {
+            document.getElementById('reg-modal').style.display = 'none';
+            document.getElementById('modal-form-state').style.display = 'block';
+            document.getElementById('modal-success-state').style.display = 'none';
+            // Re-enable pay button
+            const btn = document.getElementById('pay-btn');
+            btn.classList.remove('btn-loading');
+            btn.disabled = false;
+            btn.innerHTML = 'Pay ₹499 &amp; Reserve Spot';
+        };
+
+        // ── Show error in modal ───────────────────────────────
+        const showPayError = (msg) => {
+            const el = document.getElementById('pay-error');
+            el.textContent = msg;
+            el.style.display = 'block';
+        };
+
+        const hidePayError = () => {
+            document.getElementById('pay-error').style.display = 'none';
+        };
+
+        // ── Razorpay Payment Flow ─────────────────────────────
+        document.getElementById('registration-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            hidePayError();
+
+            const btn = document.getElementById('pay-btn');
+            btn.classList.add('btn-loading');
+            btn.disabled = true;
+            btn.innerHTML = 'Opening Payment&hellip;';
+
+            const userData = {
+                name    : document.getElementById('reg-name').value.trim(),
+                email   : document.getElementById('reg-email').value.trim(),
+                whatsapp: document.getElementById('reg-whatsapp').value.trim(),
+            };
+
+            // ── Step 1: Create server-side Razorpay order ─────
+            let order;
+            try {
+                const resp = await fetch(`${API_BASE}/api/create-order`, {
+                    method : 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body   : JSON.stringify(userData),
+                });
+                order = await resp.json();
+
+                if (!resp.ok || !order.order_id) {
+                    throw new Error(order.error || 'Order creation failed.');
+                }
+            } catch (err) {
+                console.error('Create Order Error:', err);
+                showPayError('⚠️ Could not connect to payment server. Make sure server.js is running.');
+                btn.classList.remove('btn-loading');
+                btn.disabled = false;
+                btn.innerHTML = 'Pay ₹499 &amp; Reserve Spot';
+                return;
+            }
+
+            // ── Step 2: Open Razorpay Checkout Popup ──────────
+            const rzpOptions = {
+                key            : order.key_id,
+                amount         : order.amount,
+                currency       : order.currency,
+                name           : 'Sterling AI Academy',
+                description    : '5-Day Agentic AI & Automation Workshop',
+                image          : 'https://sterlingaiacademy.com/assets/hero-shield-CM5cE7pR.png',
+                order_id       : order.order_id,
+                prefill: {
+                    name : userData.name,
+                    email: userData.email,
+                    contact: userData.whatsapp,
+                },
+                notes: {
+                    whatsapp: userData.whatsapp,
+                    source  : 'Landing Page',
+                },
+                theme: {
+                    color: '#c5a059',  // matches the site's gold accent
+                },
+                modal: {
+                    ondismiss: () => {
+                        // User closed the popup before paying
+                        btn.classList.remove('btn-loading');
+                        btn.disabled = false;
+                        btn.innerHTML = 'Pay ₹499 &amp; Reserve Spot';
+                    },
+                },
+
+                // ── Step 3: On Payment Success → Verify on Server ──
+                handler: async (response) => {
+                    btn.innerHTML = 'Verifying Payment&hellip;';
+
+                    try {
+                        const verifyResp = await fetch(`${API_BASE}/api/verify-payment`, {
+                            method : 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body   : JSON.stringify({
+                                razorpay_order_id  : response.razorpay_order_id,
+                                razorpay_payment_id: response.razorpay_payment_id,
+                                razorpay_signature : response.razorpay_signature,
+                                ...userData,
+                            }),
+                        });
+                        const result = await verifyResp.json();
+
+                        if (result.verified) {
+                            // ✅ Payment confirmed — show success
+                            document.getElementById('success-payment-id').textContent =
+                                `Payment ID: ${result.payment_id}`;
+                            document.getElementById('modal-form-state').style.display = 'none';
+                            document.getElementById('modal-success-state').style.display = 'block';
+                        } else {
+                            showPayError('❌ Payment verification failed. Contact support with your payment ID: ' + response.razorpay_payment_id);
+                            btn.classList.remove('btn-loading');
+                            btn.disabled = false;
+                            btn.innerHTML = 'Pay ₹499 &amp; Reserve Spot';
+                        }
+                    } catch (verifyErr) {
+                        console.error('Verify Error:', verifyErr);
+                        // Payment may have gone through — still show success with note
+                        document.getElementById('success-payment-id').textContent =
+                            `Payment ID: ${response.razorpay_payment_id} (Contact support if you don't receive confirmation.)`;
+                        document.getElementById('modal-form-state').style.display = 'none';
+                        document.getElementById('modal-success-state').style.display = 'block';
+                    }
+                },
+            };
+
+            const rzp = new Razorpay(rzpOptions);
+            rzp.open();
+        });
+
+        // Custom Cursor & Spotlight
+        const spotlight = document.getElementById('spotlight');
+        const cursor = document.getElementById('cursor');
+        const cursorDot = document.getElementById('cursor-dot');
+
+        document.addEventListener('mousemove', (e) => {
+            const x = e.clientX;
+            const y = e.clientY;
+
+            document.documentElement.style.setProperty('--x', x + 'px');
+            document.documentElement.style.setProperty('--y', y + 'px');
+
+            cursor.style.left = x + 'px';
+            cursor.style.top = y + 'px';
+            cursor.style.transform = `translate(-50%, -50%)`;
+
+            cursorDot.style.left = x + 'px';
+            cursorDot.style.top = y + 'px';
+            cursorDot.style.transform = `translate(-50%, -50%)`;
+        });
+
+        // Sticky CTA Logic
+        window.addEventListener('scroll', () => {
+            const sticky = document.getElementById('sticky-cta');
+            const waBtn = document.querySelector('.whatsapp-btn');
+            if (window.scrollY > 600) {
+                sticky.classList.add('active');
+                if (waBtn) waBtn.classList.add('shifted');
+            } else {
+                sticky.classList.remove('active');
+                if (waBtn) waBtn.classList.remove('shifted');
+            }
+        });
+
+        // Magnetic Effect
+        document.querySelectorAll('.btn-elite, .bento-item').forEach(btn => {
+            btn.addEventListener('mousemove', (e) => {
+                const rect = btn.getBoundingClientRect();
+                const x = e.clientX - rect.left - rect.width / 2;
+                const y = e.clientY - rect.top - rect.height / 2;
+                btn.style.transform = `scale(1.05) translate(${x * 0.2}px, ${y * 0.2}px)`;
+            });
+            btn.addEventListener('mouseleave', () => {
+                btn.style.transform = '';
+            });
+        });
+
+        // Scroll Reveal
+        const revealElements = () => {
+            const reveals = document.querySelectorAll('.reveal');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                    }
+                });
+            }, { threshold: 0.1 });
+            reveals.forEach(el => observer.observe(el));
+        };
+
+        // Smooth Scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+
+        // FAQ Toggle
+        document.querySelectorAll('.faq-question').forEach(q => {
+            q.addEventListener('click', () => {
+                const answer = q.nextElementSibling;
+                const isVisible = answer.style.display === 'block';
+                document.querySelectorAll('.faq-answer').forEach(a => a.style.display = 'none');
+                answer.style.display = isVisible ? 'none' : 'block';
+            });
+        });
+
+        // Countdown Timer
+        const countdown = () => {
+            const target = new Date('May 4, 2026 20:00:00').getTime();
+
+            const update = () => {
+                const now = new Date().getTime();
+                const gap = target - now;
+                const d = Math.floor(gap / (1000 * 60 * 60 * 24));
+                const h = Math.floor((gap % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const m = Math.floor((gap % (1000 * 60 * 60)) / (1000 * 60));
+                const s = Math.floor((gap % (1000 * 60)) / 1000);
+
+                document.getElementById('days').innerText = d.toString().padStart(2, '0');
+                document.getElementById('hours').innerText = h.toString().padStart(2, '0');
+                document.getElementById('mins').innerText = m.toString().padStart(2, '0');
+                document.getElementById('secs').innerText = s.toString().padStart(2, '0');
+            };
+            setInterval(update, 1000);
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            revealElements();
+            countdown();
+        });
+    </script>
+</body>
+
+</html>
