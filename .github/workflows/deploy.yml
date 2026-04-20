@@ -40,7 +40,7 @@ jobs:
             --platform managed \
             --region asia-south1 \
             --allow-unauthenticated \
-            --set-env-vars "RAZORPAY_KEY_ID=${{ secrets.RAZORPAY_KEY_ID }},RAZORPAY_KEY_SECRET=${{ secrets.RAZORPAY_KEY_SECRET }},PORT=8080" \
+            --set-env-vars "RAZORPAY_KEY_ID=${{ secrets.RAZORPAY_KEY_ID }},RAZORPAY_KEY_SECRET=${{ secrets.RAZORPAY_KEY_SECRET }}" \
             --project ${{ secrets.GCP_PROJECT_ID }}
 
       # Step 6: Print the live URL
