@@ -633,6 +633,54 @@
             background: rgba(255, 255, 255, 0.08);
         }
 
+        /* Language Toggle */
+        .lang-selector {
+            margin-bottom: 1.5rem;
+        }
+        .lang-selector label.lang-label {
+            display: block;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 0.6rem;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+        .lang-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+        }
+        .lang-options input[type="radio"] {
+            display: none;
+        }
+        .lang-options label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.85rem 1rem;
+            border-radius: 1rem;
+            border: 1.5px solid rgba(255, 255, 255, 0.12);
+            background: rgba(255, 255, 255, 0.04);
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            user-select: none;
+        }
+        .lang-options label:hover {
+            border-color: var(--accent);
+            background: rgba(197, 160, 89, 0.08);
+            color: #fff;
+        }
+        .lang-options input[type="radio"]:checked + label {
+            border-color: var(--accent);
+            background: rgba(197, 160, 89, 0.15);
+            color: var(--accent);
+            box-shadow: 0 0 14px rgba(197, 160, 89, 0.25);
+        }
+
         .success-state {
             display: none;
             text-align: center;
@@ -1108,6 +1156,18 @@
                     <input type="text" id="reg-name" class="reg-input" placeholder="Full Name" required>
                     <input type="email" id="reg-email" class="reg-input" placeholder="Email Address" required>
                     <input type="tel" id="reg-whatsapp" class="reg-input" placeholder="WhatsApp Number (With Country Code)" required>
+
+                    <!-- Language Preference -->
+                    <div class="lang-selector">
+                        <label class="lang-label">🌐 Preferred Class Language</label>
+                        <div class="lang-options">
+                            <input type="radio" id="lang-malayalam" name="language" value="Malayalam" checked>
+                            <label for="lang-malayalam">🇮🇳 മലയാളം</label>
+
+                            <input type="radio" id="lang-english" name="language" value="English">
+                            <label for="lang-english">🌐 English</label>
+                        </div>
+                    </div>
                     
                     <button type="submit" id="pay-btn" class="btn-elite" style="width: 100%; border: none; cursor: pointer;">
                         Pay ₹499 &amp; Reserve Spot
@@ -1140,7 +1200,7 @@
         // ── CONFIG — Update this when you deploy to Railway ────────────
         // LOCAL DEV:   leave as empty string '' (calls same server)
         // LOVABLE/PROD: paste your Railway URL → 'https://your-app.up.railway.app'
-        const API_BASE = 'https://razorpaybackend-22tr.onrender.com';   // ← REPLACE WITH RAILWAY URL WHEN DEPLOYING TO LOVABLE
+        const API_BASE = '';   // ← Using local server for development
         // ────────────────────────────────────────────────────────────────
 
         // ── Modal Logic ───────────────────────────────────────
@@ -1180,10 +1240,12 @@
             btn.disabled = true;
             btn.innerHTML = 'Opening Payment&hellip;';
 
+            const selectedLang = document.querySelector('input[name="language"]:checked');
             const userData = {
                 name    : document.getElementById('reg-name').value.trim(),
                 email   : document.getElementById('reg-email').value.trim(),
                 whatsapp: document.getElementById('reg-whatsapp').value.trim(),
+                language: selectedLang ? selectedLang.value : 'Malayalam',
             };
 
             // ── Step 1: Create server-side Razorpay order ─────

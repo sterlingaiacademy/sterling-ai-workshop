@@ -9,6 +9,7 @@ const Razorpay = require('razorpay');
 const crypto  = require('crypto');
 const cors    = require('cors');
 const path    = require('path');
+const fs      = require('fs');
 
 const app = express();
 
@@ -37,15 +38,26 @@ const corsOptions = {
 };
 app.use(cors(corsOptions));
 app.options('*', cors(corsOptions)); // Pre-flight
+app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // ── Serve static files (index.html, assets/) ─────────────
 app.use(express.static(path.join(__dirname)));
 
 // ── Razorpay instance ─────────────────────────────────────
+const RAZORPAY_KEY_ID = process.env.RAZORPAY_KEY_ID;
+const RAZORPAY_KEY_SECRET = process.env.RAZORPAY_KEY_SECRET;
+
+if (!RAZORPAY_KEY_ID || !RAZORPAY_KEY_SECRET) {
+    console.error('\n❌ ERROR: Razorpay API keys are missing!');
+    console.error('Make sure RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET are set in your .env file or environment variables.\n');
+    // We don't exit(1) here so the server can still serve the health check or error messages,
+    // but the payment flow will throw an error when used.
+}
+
 const razorpay = new Razorpay({
-    key_id    : process.env.RAZORPAY_KEY_ID,
-    key_secret: process.env.RAZORPAY_KEY_SECRET,
+    key_id    : RAZORPAY_KEY_ID,
+    key_secret: RAZORPAY_KEY_SECRET,
 });
 
 // ── Health check ──────────────────────────────────────────
@@ -65,7 +77,7 @@ app.get('/api/key', (req, res) => {
 // ─────────────────────────────────────────────────────────
 app.post('/api/create-order', async (req, res) => {
     try {
-        const { name, email, whatsapp } = req.body;
+        const { name, email, whatsapp, language } = req.body;
 
         if (!name || !email || !whatsapp) {
             return res.status(400).json({ error: 'Name, email and WhatsApp are required.' });
@@ -79,6 +91,7 @@ app.post('/api/create-order', async (req, res) => {
                 name,
                 email,
                 whatsapp,
+                language: language || 'Malayalam',
                 source: 'Sterling AI Academy Landing Page',
             },
         };
@@ -113,6 +126,7 @@ app.post('/api/verify-payment', async (req, res) => {
             name,
             email,
             whatsapp,
+            language,
         } = req.body;
 
         // ── Signature Verification ────────────────────────
@@ -127,6 +141,17 @@ app.post('/api/verify-payment', async (req, res) => {
         }
 
         console.log(`[Payment Verified ✅] Order: ${razorpay_order_id} | Payment: ${razorpay_payment_id} | ${email}`);
+
+        // ── Save to CSV ──────────────────────────────────
+        const csvLine = `"${new Date().toISOString()}","${name}","${email}","${whatsapp}","${language || 'N/A'}","${razorpay_payment_id}"\n`;
+        const csvPath = path.join(__dirname, 'registrations.csv');
+        
+        // Add header if file doesn't exist
+        if (!fs.existsSync(csvPath)) {
+            fs.writeFileSync(csvPath, 'Timestamp,Name,Email,WhatsApp,Language,PaymentID\n');
+        }
+        fs.appendFileSync(csvPath, csvLine);
+        console.log(`[Data Saved] Saved to registrations.csv`);
 
         res.json({
             verified   : true,
