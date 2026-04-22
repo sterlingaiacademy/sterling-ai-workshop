@@ -67,7 +67,21 @@ let sheet;
 async function initGoogleSheets() {
     try {
         const spreadsheetId = process.env.GOOGLE_SHEET_ID;
-        const serviceAccountJson = JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_JSON);
+        let serviceAccountJsonRaw = process.env.GOOGLE_SERVICE_ACCOUNT_JSON;
+
+        if (!serviceAccountJsonRaw) {
+            throw new Error('GOOGLE_SERVICE_ACCOUNT_JSON is missing');
+        }
+
+        // Handle Base64 encoding (to prevent gcloud CLI parsing errors)
+        let serviceAccountJson;
+        if (serviceAccountJsonRaw.trim().startsWith('{')) {
+            serviceAccountJson = JSON.parse(serviceAccountJsonRaw);
+        } else {
+            // Decode from Base64
+            const decoded = Buffer.from(serviceAccountJsonRaw, 'base64').toString('utf-8');
+            serviceAccountJson = JSON.parse(decoded);
+        }
 
         const auth = new JWT({
             email: serviceAccountJson.client_email,
