@@ -40,7 +40,7 @@ jobs:
             --platform managed \
             --region asia-southeast1 \
             --allow-unauthenticated \
-            --set-env-vars "RAZORPAY_KEY_ID=${{ secrets.RAZORPAY_KEY_ID }},RAZORPAY_KEY_SECRET=${{ secrets.RAZORPAY_KEY_SECRET }}" \
+            --set-env-vars "RAZORPAY_KEY_ID=${{ secrets.RAZORPAY_KEY_ID }},RAZORPAY_KEY_SECRET=${{ secrets.RAZORPAY_KEY_SECRET }},GOOGLE_SHEET_ID=${{ secrets.GOOGLE_SHEET_ID }},GOOGLE_SERVICE_ACCOUNT_JSON='${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}'" \
             --project ${{ secrets.GCP_PROJECT_ID }}
 
       # Step 6: Print the live URL

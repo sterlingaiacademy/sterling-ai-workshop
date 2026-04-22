@@ -10,6 +10,8 @@ const crypto  = require('crypto');
 const cors    = require('cors');
 const path    = require('path');
 const fs      = require('fs');
+const { GoogleSpreadsheet } = require('google-spreadsheet');
+const { JWT } = require('google-auth-library');
 
 const app = express();
 
@@ -59,6 +61,29 @@ const razorpay = new Razorpay({
     key_id    : RAZORPAY_KEY_ID,
     key_secret: RAZORPAY_KEY_SECRET,
 });
+
+// ── Google Sheets Setup ───────────────────────────────────
+let sheet;
+async function initGoogleSheets() {
+    try {
+        const spreadsheetId = process.env.GOOGLE_SHEET_ID;
+        const serviceAccountJson = JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_JSON);
+
+        const auth = new JWT({
+            email: serviceAccountJson.client_email,
+            key: serviceAccountJson.private_key,
+            scopes: ['https://www.googleapis.com/auth/spreadsheets'],
+        });
+
+        const doc = new GoogleSpreadsheet(spreadsheetId, auth);
+        await doc.loadInfo();
+        sheet = doc.sheetsByIndex[0]; // Uses the first tab
+        console.log(`[Google Sheets] Connected to: ${doc.title}`);
+    } catch (err) {
+        console.error('[Google Sheets Error] Could not initialize:', err.message);
+    }
+}
+initGoogleSheets();
 
 // ── Health check ──────────────────────────────────────────
 app.get('/api/health', (req, res) => {
@@ -142,16 +167,24 @@ app.post('/api/verify-payment', async (req, res) => {
 
         console.log(`[Payment Verified ✅] Order: ${razorpay_order_id} | Payment: ${razorpay_payment_id} | ${email}`);
 
-        // ── Save to CSV ──────────────────────────────────
-        const csvLine = `"${new Date().toISOString()}","${name}","${email}","${whatsapp}","${language || 'N/A'}","${razorpay_payment_id}"\n`;
-        const csvPath = path.join(__dirname, 'registrations.csv');
-        
-        // Add header if file doesn't exist
-        if (!fs.existsSync(csvPath)) {
-            fs.writeFileSync(csvPath, 'Timestamp,Name,Email,WhatsApp,Language,PaymentID\n');
+        // ── Save to Google Sheets ─────────────────────────
+        if (sheet) {
+            try {
+                await sheet.addRow({
+                    Timestamp: new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }),
+                    Name: name,
+                    Email: email,
+                    WhatsApp: whatsapp,
+                    Language: language || 'Malayalam',
+                    PaymentID: razorpay_payment_id
+                });
+                console.log(`[Data Saved] Successfully added row to Google Sheets`);
+            } catch (sheetErr) {
+                console.error('[Google Sheets Save Error]', sheetErr.message);
+            }
+        } else {
+            console.warn('[Data Not Saved] Google Sheets not initialized. Please check your secrets.');
         }
-        fs.appendFileSync(csvPath, csvLine);
-        console.log(`[Data Saved] Saved to registrations.csv`);
 
         res.json({
             verified   : true,
