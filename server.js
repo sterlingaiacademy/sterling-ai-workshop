@@ -190,7 +190,8 @@ app.post('/api/verify-payment', async (req, res) => {
                     Email: email,
                     WhatsApp: whatsapp,
                     Language: language || 'Malayalam',
-                    PaymentID: razorpay_payment_id
+                    'Order ID': razorpay_order_id,
+                    'Payment ID': razorpay_payment_id
                 });
                 console.log(`[Data Saved] Successfully added row to Google Sheets`);
             } catch (sheetErr) {
