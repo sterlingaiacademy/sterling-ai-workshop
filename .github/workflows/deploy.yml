@@ -38,7 +38,7 @@ jobs:
           gcloud run deploy sterling-ai-workshop \
             --image gcr.io/${{ secrets.GCP_PROJECT_ID }}/sterling-ai-workshop \
             --platform managed \
-            --region asia-south1 \
+            --region asia-southeast1 \
             --allow-unauthenticated \
             --set-env-vars "RAZORPAY_KEY_ID=${{ secrets.RAZORPAY_KEY_ID }},RAZORPAY_KEY_SECRET=${{ secrets.RAZORPAY_KEY_SECRET }}" \
             --project ${{ secrets.GCP_PROJECT_ID }}
@@ -49,6 +49,6 @@ jobs:
           echo "✅ Deployment complete!"
           gcloud run services describe sterling-ai-workshop \
             --platform managed \
-            --region asia-south1 \
+            --region asia-southeast1 \
             --format 'value(status.url)' \
             --project ${{ secrets.GCP_PROJECT_ID }}
