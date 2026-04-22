@@ -605,6 +605,12 @@
             width: 90%;
             position: relative;
             box-shadow: 0 0 50px var(--accent-glow);
+            animation: modalIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes modalIn {
+            from { opacity: 0; transform: scale(0.95) translateY(10px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
         }
 
         .modal-close {
@@ -1145,7 +1151,7 @@
 
     <!-- Registration Modal HTML -->
     <div class="modal-overlay" id="reg-modal">
-        <div class="modal-content bento-item">
+        <div class="modal-content">
             <span class="modal-close" onclick="closeModal()">&times;</span>
             
             <div id="modal-form-state">
