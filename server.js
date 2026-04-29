@@ -237,6 +237,7 @@ app.post('/api/webhook', async (req, res) => {
             // Extract Name from common Razorpay field variations
             const name = payment.notes?.name || 
                          payment.notes?.Name || 
+                         payment.notes?.['Name:'] || 
                          payment.notes?.['Full Name'] || 
                          payment.notes?.['Name '] || 
                          'Student';
