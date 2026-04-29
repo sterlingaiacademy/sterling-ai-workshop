@@ -233,9 +233,19 @@ app.post('/api/webhook', async (req, res) => {
             
             const email = payment.email || 'N/A';
             const whatsapp = payment.contact || 'N/A';
-            // Custom fields from Payment Pages are usually stored in notes
-            const name = payment.notes?.name || payment.notes?.['Full Name'] || 'Student';
-            const language = payment.notes?.['Preferred Class Language'] || 'Manglish';
+            
+            // Extract Name from common Razorpay field variations
+            const name = payment.notes?.name || 
+                         payment.notes?.Name || 
+                         payment.notes?.['Full Name'] || 
+                         payment.notes?.['Name '] || 
+                         'Student';
+
+            // Extract Language preference
+            const language = payment.notes?.language || 
+                             payment.notes?.Language || 
+                             payment.notes?.['Preferred Class Language'] || 
+                             'Manglish';
             
             console.log(`[Webhook Received] Payment: ${payment.id} | ${email}`);
 
