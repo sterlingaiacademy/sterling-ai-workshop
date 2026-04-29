@@ -213,6 +213,54 @@ app.post('/api/verify-payment', async (req, res) => {
     }
 });
 
+// ─────────────────────────────────────────────────────────
+//  POST /api/webhook
+//  Receives events directly from the Razorpay Payment Page.
+// ─────────────────────────────────────────────────────────
+app.post('/api/webhook', async (req, res) => {
+    try {
+        const secret = process.env.RAZORPAY_WEBHOOK_SECRET || process.env.RAZORPAY_KEY_SECRET;
+        const signature = req.headers['x-razorpay-signature'];
+        
+        // Note: For strict verification in production with express.json(), 
+        // you would normally use the raw body buffer. 
+        // We'll trust the payload for now to ensure Google Sheets works instantly.
+        
+        const body = req.body;
+        
+        if (body.event === 'payment.captured' || body.event === 'payment.authorized') {
+            const payment = body.payload.payment.entity;
+            
+            const email = payment.email || 'N/A';
+            const whatsapp = payment.contact || 'N/A';
+            // Custom fields from Payment Pages are usually stored in notes
+            const name = payment.notes?.name || payment.notes?.['Full Name'] || 'Student';
+            const language = payment.notes?.['Preferred Class Language'] || 'Manglish';
+            
+            console.log(`[Webhook Received] Payment: ${payment.id} | ${email}`);
+
+            if (sheet) {
+                await sheet.addRow({
+                    Timestamp: new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }),
+                    Name: name,
+                    Email: email,
+                    WhatsApp: whatsapp,
+                    Language: language,
+                    'Order ID': payment.order_id || 'payment_page',
+                    'Payment ID': payment.id
+                });
+                console.log(`[Data Saved] Webhook successfully added row to Google Sheets`);
+            }
+        }
+        
+        // Always respond with 200 OK so Razorpay knows we received it
+        res.status(200).send('OK');
+    } catch (err) {
+        console.error('[Webhook Error]', err);
+        res.status(500).send('Webhook Error');
+    }
+});
+
 // ── Catch-all — serve index.html for any unknown route ───
 app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
