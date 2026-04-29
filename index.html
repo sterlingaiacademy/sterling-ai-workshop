@@ -4,6 +4,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Meta Pixel Code -->
+    <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '795177290102019');
+    fbq('track', 'PageView');
+    </script>
+    <noscript><img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=795177290102019&ev=PageView&noscript=1"
+    /></noscript>
+    <!-- End Meta Pixel Code -->
     <title>Sterling AI Academy | Agentic AI & Automation Workshop by Fathima Rasha TP</title>
     <meta name="description"
         content="Master Agentic AI, n8n, and ElevenLabs with Autonomous AI Architect Fathima Rasha TP. Build self-executing systems and lead the automation revolution.">
@@ -1369,6 +1386,13 @@
             btn.disabled = true;
             btn.innerHTML = 'Opening Payment&hellip;';
 
+            // Meta Pixel: Track initiation of checkout
+            fbq('track', 'InitiateCheckout', {
+                value: 499.00,
+                currency: 'INR',
+                content_name: 'Agentic AI Workshop'
+            });
+
             const selectedLang = document.querySelector('input[name="language"]:checked');
             const userData = {
                 name: document.getElementById('reg-name').value.trim(),
@@ -1447,6 +1471,13 @@
                         const result = await verifyResp.json();
 
                         if (result.verified) {
+                            // Meta Pixel: Track successful Lead/Purchase
+                            fbq('track', 'Lead', {
+                                value: 499.00,
+                                currency: 'INR',
+                                content_name: 'Agentic AI Workshop'
+                            });
+
                             // ✅ Payment confirmed — show success
                             document.getElementById('success-payment-id').textContent =
                                 `Payment ID: ${result.payment_id}`;
