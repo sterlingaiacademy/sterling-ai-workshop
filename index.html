@@ -1605,6 +1605,8 @@
         document.addEventListener('DOMContentLoaded', () => {
             revealElements();
             countdown();
+            // Track visit on backend
+            fetch('/api/track-visit', { method: 'POST' }).catch(err => console.error('Visit track error:', err));
         });
     </script>
 </body>

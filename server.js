@@ -99,6 +99,34 @@ async function initGoogleSheets() {
 }
 initGoogleSheets();
 
+// ── Visitor Tracking ──────────────────────────────────────
+const VISITS_FILE = path.join(__dirname, 'visits.json');
+let totalVisits = 0;
+
+// Load previous visits if the file exists
+try {
+    if (fs.existsSync(VISITS_FILE)) {
+        const data = fs.readFileSync(VISITS_FILE, 'utf8');
+        totalVisits = JSON.parse(data).visits || 0;
+    }
+} catch (err) {
+    console.error('Error loading visits file:', err);
+}
+
+app.post('/api/track-visit', (req, res) => {
+    totalVisits++;
+    try {
+        fs.writeFileSync(VISITS_FILE, JSON.stringify({ visits: totalVisits }));
+    } catch (err) {
+        console.error('Error saving visits file:', err);
+    }
+    res.json({ success: true, visits: totalVisits });
+});
+
+app.get('/api/visits', (req, res) => {
+    res.json({ total_website_visits: totalVisits });
+});
+
 // ── Health check ──────────────────────────────────────────
 app.get('/api/health', (req, res) => {
     res.json({ status: 'ok', timestamp: new Date().toISOString() });
