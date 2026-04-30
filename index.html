@@ -1605,8 +1605,11 @@
         document.addEventListener('DOMContentLoaded', () => {
             revealElements();
             countdown();
-            // Track visit on backend
-            fetch('/api/track-visit', { method: 'POST' }).catch(err => console.error('Visit track error:', err));
+            // Track visit on backend (only count unique visitors)
+            if (!localStorage.getItem('has_visited_sterling_ai')) {
+                fetch('/api/track-visit', { method: 'POST' }).catch(err => console.error('Visit track error:', err));
+                localStorage.setItem('has_visited_sterling_ai', 'true');
+            }
         });
     </script>
 </body>
